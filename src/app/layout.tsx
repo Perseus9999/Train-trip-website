@@ -4,9 +4,13 @@ import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: 'Book Train Travel With Crypto',
+  description: 'Created by God',
+  generator: 'God',
+  applicationName: 'Train Trip',
+  authors: [{ name: 'God'}],
+  keywords: ['Train Trip', 'Next.js', 'React', 'Tailwind CSS', 'Geist UI'],
+  icons: './favicon.png',
 }
 
 export default function RootLayout({

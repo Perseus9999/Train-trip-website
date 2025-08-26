@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import 'flag-icons/css/flag-icons.min.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -40,9 +41,9 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: oklch(21.336% 0.03371 240.089);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
+  --card: oklch(25.572% 0.04548 236.75);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
