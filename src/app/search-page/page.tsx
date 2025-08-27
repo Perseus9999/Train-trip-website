@@ -2,6 +2,7 @@
 
 import SearchResultPage from "@/src/components/searchResultPage"
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
@@ -12,6 +13,8 @@ export default function SearchPage() {
   const travellers = searchParams.get("passengers") || "";
 
   return (
-    <SearchResultPage from={departure} to={arrival} departDate={departureDate} returnDate={returnDate} passengers={travellers}/>
+    <Suspense fallback={<div>Loading search result...</div>}>
+      <SearchResultPage from={departure} to={arrival} departDate={departureDate} returnDate={returnDate} passengers={travellers}/>
+    </Suspense>
   )
 }
