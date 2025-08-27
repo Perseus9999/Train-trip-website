@@ -9,6 +9,7 @@ import { useState, useEffect } from "react"
 import TravellerSelector from "@/src/components/travellerSelector"
 import { toast } from "@/src/components/ui/use-toast"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 export default function HomePage() {
   const [isDark, setIsDark] = useState(false)
@@ -42,6 +43,8 @@ export default function HomePage() {
     document.documentElement.classList.toggle("dark", isDark)
   }, [isDark])
 
+  const router = useRouter();
+
   function searchTrains() {
     // Implement search functionality here
     if(!departure || !arrival || !departureDate || !travellers || !returnDate) {
@@ -59,6 +62,14 @@ export default function HomePage() {
       status: "success",
       duration:4000
     });
+    const params = new URLSearchParams({
+      from: departure,
+      to: arrival,
+      departDate: departureDate,
+      returnDate: returnDate,
+      passengers: travellers,
+    });
+    router.push(`/search-page?${params.toString()}`);
     console.log("Searching trains from", departure, "to", arrival, "on", departureDate, "returning on", returnDate, "for", travellers);
   }
 
@@ -274,9 +285,9 @@ export default function HomePage() {
                 {
                   !departure || !arrival || !departureDate || !travellers || !returnDate ? 
                   "Fill All Fields" :                 
-                  <Link href={'/search-page'}>
-                      Search
-                  </Link>
+                  // <Link href={'/search-page'}>
+                      "Search"
+                  // </Link>
                 }
               </Button>
             </div>

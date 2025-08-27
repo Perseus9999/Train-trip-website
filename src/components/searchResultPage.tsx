@@ -21,7 +21,7 @@ interface WaybeTravelResultsProps {
   to?: string
   departDate?: string
   returnDate?: string
-  passengers?: number
+  passengers?: string
   results?: TravelResult[]
 }
 
@@ -78,7 +78,7 @@ export default function SearchResultPage({
   to = "London Heathrow (T1)",
   departDate = "Wed 27 Aug",
   returnDate = "Thu 28 Aug",
-  passengers = 1,
+  passengers = "1 adult",
   results = mockResults,
 }: WaybeTravelResultsProps) {
   const [selectedResults, setSelectedResults] = useState<Set<string>>(new Set())
@@ -125,28 +125,34 @@ export default function SearchResultPage({
         <h2 className="text-2xl font-bold text-foreground mb-4">Results</h2>
 
         {/* Journey Summary */}
-        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-          <span className="font-medium">{from}</span>
-          <span>→</span>
-          <span className="font-medium">{to}</span>
-          <span className="ml-4">{departDate}</span>
-          <span>•</span>
-          <span>{passengers} passenger</span>
-          <span>•</span>
-          <span>Return: {returnDate}</span>
-          <Button
-            variant="outline"
-            size="sm"
-            className="ml-auto bg-purple-600 text-white border-purple-600 hover:bg-purple-700"
-          >
-            <Link href={'/'}>
-              Modify Search
-            </Link>
-          </Button>
+        <div className="flex items-center flex-col sm:flex-row gap-4 text-sm text-muted-foreground mb-4 mx-2">
+          <div className="flex items-center justify-center gap-1 w-100">
+            <span className="font-medium">{from}</span>
+            <span>→</span>
+            <span className="font-medium">{to}</span>
+          </div>
+          <div className="flex overflow-x-auto items-center justify-start gap-2 max-w-md mx-3 text-lg custom-scrollbar">
+            <span className="flex-shrink-0 flex flex-col items-center">Departure: {departDate}</span>
+            <span>•</span>
+            <span className="flex-shrink-0 flex flex-col items-center">Passenger: {passengers}</span>
+            <span>•</span>
+            <span className="flex-shrink-0 flex flex-col items-center">Return: {returnDate}</span>
+          </div>
+          <div className="flex items-center justify-center w-70">
+            <Button
+              variant="outline"
+              size="sm"
+              className="ml-auto bg-purple-600 text-white border-purple-600 hover:bg-purple-700"
+            >
+              <Link href={'/'}>
+                Modify Search
+              </Link>
+            </Button>
+          </div>
         </div>
 
         {/* Date Selector */}
-        <div className="flex gap-2 mb-6 overflow-x-auto">
+        <div className="flex gap-2 mb-6 overflow-x-auto custom-scrollbar">
           {[
             { date: "23 Aug", day: "Fri", price: "£28.89" },
             { date: "24 Aug", day: "Sat", price: "£28.89" },
@@ -173,19 +179,19 @@ export default function SearchResultPage({
         </div>
 
         {/* Journey Type Tabs */}
-        <div className="flex gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <Button variant="outline" className="border-purple-600 text-purple-600 bg-transparent">
-            Outbound • Wed 27 Aug
+            Outbound • {departDate}
           </Button>
           <Button variant="outline" className="border-border bg-transparent">
-            Return • Thu 28 Aug
+            Return • {returnDate}
           </Button>
         </div>
 
         {/* Results Count */}
         <div className="flex items-center justify-between mb-4">
           <p className="text-muted-foreground">{results.length} trains found</p>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-col sm:flex-row">
             <Button
               variant="outline"
               size="sm"
