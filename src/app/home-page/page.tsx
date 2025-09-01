@@ -15,22 +15,31 @@ export default function HomePage() {
   const [isDark, setIsDark] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [departure, setDeparture] = useState('')
+  const [arrival, setArrival] = useState('')
+  const [departureLabel, setDepartureLabel] = useState('')
+  const [arrivalLabel, setArrivalLabel] = useState('')
   const stationOptions = [
-    { value: 'station1', label: 'Station 1' },
-    { value: 'station2', label: 'Station 2' },
+    { value: 'GBLONLHB', label: 'London Heathrow T5' },
+    { value: 'GBLONLPB', label: 'London Paddington' },
     { value: 'station3', label: 'Station 3' },
     { value: 'station4', label: 'Station 4' },
     { value: 'station5', label: 'Station 5' },
     { value: 'station6', label: 'Station 6' },
   ];
-  const [arrival, setArrival] = useState('')
-  const [departureDate, setDepartureDate] = useState('2025-08-27')
+  // get time now
+  function getCurrentDate(): string {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // months are 0-based
+    const day = String(now.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
+  const [departureDate, setDepartureDate] = useState(getCurrentDate())
   const [returnDate, setReturnDate] = useState('')
-  const travellerOptions = {
-    "1adult": "1 Adult, No Discount",
-    "2adult": "2 Adults, No Discount"
-  } as const;
-  const [travellers, setTravellers] = useState("1adult");
+  const [travellers, setTravellers] = useState("");
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme")
@@ -47,7 +56,7 @@ export default function HomePage() {
 
   function searchTrains() {
     // Implement search functionality here
-    if(!departure || !arrival || !departureDate || !travellers || !returnDate) {
+    if(!departure || !arrival || !departureDate) {
       toast({
         title: "Missing Information",
         description: "Please fill in all fields before searching.",
@@ -207,11 +216,14 @@ export default function HomePage() {
                   value={stationOptions.find(opt => opt.label === departure)?.value || ''}
                   onValueChange={value => {
                     const selected = stationOptions.find(opt => opt.value === value);
-                    if (selected) setDeparture(selected.label);
+                    if (selected) {
+                      setDeparture(selected.value);
+                      setDepartureLabel(selected.label);
+                    };
                   }}
                 >
                   <SelectTrigger className={`w-full h-12 ${isDark ? "bg-gray-700 border-gray-600 text-white" : ""}`}>
-                    <SelectValue placeholder={departure || "Select Station"} />
+                    <SelectValue placeholder={departureLabel || "Select Station"} />
                   </SelectTrigger>
                   <SelectContent>
                     {stationOptions.map(opt => (
@@ -229,11 +241,14 @@ export default function HomePage() {
                   value={stationOptions.find(opt => opt.label === arrival)?.value || ''}
                   onValueChange={value => {
                     const selected = stationOptions.find(opt => opt.value === value);
-                    if (selected) setArrival(selected.label);
+                    if (selected) {
+                      setArrival(selected.value);
+                      setArrivalLabel(selected.label);
+                    }
                   }}
                 >
                   <SelectTrigger className={`w-full h-20 ${isDark ? "bg-gray-700 border-gray-600 text-white" : ""}`}>
-                    <SelectValue placeholder={arrival || "Select Station"} />
+                    <SelectValue placeholder={ arrivalLabel || "Select Station"} />
                   </SelectTrigger>
                   <SelectContent>
                     {stationOptions.map(opt => (
@@ -249,7 +264,7 @@ export default function HomePage() {
                 </label>
                 <Input
                   type="date"
-                  defaultValue="2025-08-27"
+                  defaultValue={getCurrentDate()}
                   className={`h-9 ${isDark ? "bg-gray-700 border-gray-600 text-white" : ""}`}
                   onChange={(e) => setDepartureDate((e.target as HTMLInputElement).value)}
                 />
@@ -275,7 +290,7 @@ export default function HomePage() {
                 <TravellerSelector theme={isDark} onChange={setTravellers}></TravellerSelector>
               </div>
             </div>
-            <div className={`mt-8 rounded-lg ${!departure || !arrival || !departureDate || !travellers || !returnDate ? "" : "glow"}`}>
+            <div className={`mt-8 rounded-lg ${!departure || !arrival || !departureDate ? "" : "glow"}`}>
               <Button
                 className={`w-full sm:w-auto px-8 md:px-12 py-4 text-lg font-semibold ${
                   isDark ? "bg-blue-600 text-white hover:bg-blue-500" : "bg-black text-white hover:bg-gray-800"
@@ -283,7 +298,7 @@ export default function HomePage() {
                 onClick={() => searchTrains()}
               >
                 {
-                  !departure || !arrival || !departureDate || !travellers || !returnDate ? 
+                  !departure || !arrival || !departureDate ? 
                   "Fill All Fields" :                 
                   // <Link href={'/search-page'}>
                       "Search"

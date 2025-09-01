@@ -1,10 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/src/components/ui/button"
 import { Card } from "@/src/components/ui/card"
 import { Badge } from "@/src/components/ui/badge"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+
+const temple_result = '../res-json/standard-res.json'
 
 interface TravelResult {
   id: string
@@ -25,67 +28,65 @@ interface WaybeTravelResultsProps {
   results?: TravelResult[]
 }
 
-const mockResults: TravelResult[] = [
-  {
-    id: "1",
-    departureTime: "04:34",
-    arrivalTime: "04:58",
-    duration: "24 min",
-    standardPrice: 28.89,
-    firstClassPrice: 36.97,
-    route: "Direct service • Heathrow Express",
-  },
-  {
-    id: "2",
-    departureTime: "04:51",
-    arrivalTime: "05:17",
-    duration: "26 min",
-    standardPrice: 28.89,
-    firstClassPrice: 36.97,
-    route: "Direct service • Heathrow Express",
-  },
-  {
-    id: "3",
-    departureTime: "05:10",
-    arrivalTime: "05:32",
-    duration: "22 min",
-    standardPrice: 28.89,
-    firstClassPrice: 36.97,
-    route: "Direct service • Heathrow Express",
-  },
-  {
-    id: "4",
-    departureTime: "05:25",
-    arrivalTime: "05:47",
-    duration: "22 min",
-    standardPrice: 28.89,
-    firstClassPrice: 36.97,
-    route: "Direct service • Heathrow Express",
-  },
-  {
-    id: "5",
-    departureTime: "05:40",
-    arrivalTime: "06:01",
-    duration: "21 min",
-    standardPrice: 28.89,
-    firstClassPrice: 36.97,
-    route: "Direct service • Heathrow Express",
-  },
-]
+// Helper to transform API data to TravelResult[]
+function parseResults(json: any): TravelResult[] {
+  if (!json?.data) return [];
+  return json.data.map((item: any) => {
+    const attrs = item.attributes;
+    // Find fares for standard and first class
+    const fares = item.relationships?.fares?.data || [];
+    let standardPrice = null;
+    let firstClassPrice = null;
+    fares.forEach((fare: any) => {
+      if (fare.fare_class?.code === "FARE-15" || fare.fare_class?.code === "FARE-1") {
+        standardPrice = fare.price / 100; // Assuming price is in cents
+      }
+      if (fare.fare_class?.code === "FARE-10") {
+        firstClassPrice = fare.price / 100;
+      }
+    });
+    return {
+      id: item.id,
+      departureTime: attrs.departure_time?.slice(-5) || "",
+      arrivalTime: attrs.arrival_time?.slice(-5) || "",
+      duration: attrs.duration ? `${Math.round(attrs.duration / 60)} min` : "",
+      standardPrice: standardPrice ?? attrs.cheapest_total_adult_price / 100,
+      firstClassPrice: firstClassPrice ?? attrs.cheapest_total_adult_price / 100,
+      route: attrs.leg_type || "",
+    };
+  });
+}
 
 export default function SearchResultPage({
   from = "London Paddington",
   to = "London Heathrow (T1)",
   departDate = "Wed 27 Aug",
   returnDate = "Thu 28 Aug",
-  passengers = "1 adult",
-  results = mockResults,
+  passengers = "1 59",
+  results,
 }: WaybeTravelResultsProps) {
-  const [selectedResults, setSelectedResults] = useState<Set<string>>(new Set())
-  const [showMore, setShowMore] = useState(false)
-  const [sortBy, setSortBy] = useState<"departure" | "price" | "duration">("departure")
+  const [selectedResults, setSelectedResults] = useState<Set<string>>(new Set());
+  const [showMore, setShowMore] = useState(false);
+  const [sortBy, setSortBy] = useState<"departure" | "price" | "duration">("departure");
+  const [routeType, setRouteType] = useState("out");
+  const [displayedResults, setDisplayedResults] = useState<TravelResult[]>([]);
 
-  const sortedResults = [...results].sort((a, b) => {
+  let parsedResults: TravelResult[] = [];
+  parsedResults = results && results.length > 0 ? results : parseResults(results);
+  // if (Array.isArray(results) && results.length > 0 && "departureTime" in results[0]) {
+  //   parsedResults = results;
+  // } else if (results) {
+  //   parsedResults = parseResults(results);
+  // }
+
+  const router = useRouter();
+
+  if(routeType == "out") parsedResults = parsedResults.filter((item) => item.route === "outbound")
+  else if (routeType == "in") parsedResults = parsedResults.filter((item) => item.route === "inbound")
+  else parsedResults = parsedResults.filter((item) => item.route === "outbound")
+  console.log(`routeType = ${routeType}, parsedResults => ${parsedResults}`)
+
+  const sortedResults = [...parsedResults].sort((a, b) => {
     switch (sortBy) {
       case "departure":
         return a.departureTime.localeCompare(b.departureTime)
@@ -102,7 +103,9 @@ export default function SearchResultPage({
     }
   })
 
-  const displayedResults = showMore ? sortedResults : sortedResults.slice(0, 5)
+  useEffect(() => {
+    setDisplayedResults(showMore ? sortedResults : sortedResults.slice(0, 5))
+  }, [routeType, sortBy, showMore])
 
   const handleResultSelect = (resultId: string) => {
     const newSelected = new Set(selectedResults)
@@ -112,6 +115,12 @@ export default function SearchResultPage({
       newSelected.add(resultId)
     }
     setSelectedResults(newSelected)
+
+    console.log("Selected Result Id=>", selectedResults)
+
+    const params = new URLSearchParams({
+    });
+    router.push(`/selectFare-page`);
   }
 
   return (
@@ -152,45 +161,51 @@ export default function SearchResultPage({
         </div>
 
         {/* Date Selector */}
-        <div className="flex gap-2 mb-6 overflow-x-auto custom-scrollbar">
-          {[
-            { date: "23 Aug", day: "Fri", price: "£28.89" },
-            { date: "24 Aug", day: "Sat", price: "£28.89" },
-            { date: "25 Aug", day: "Sun", price: "£28.89" },
-            { date: "26 Aug", day: "Mon", price: "£28.89" },
-            { date: "27 Aug", day: "Tue", price: "£28.89", selected: true },
-            { date: "28 Aug", day: "Wed", price: "£28.89" },
-            { date: "29 Aug", day: "Thu", price: "£28.89" },
-            { date: "30 Aug", day: "Fri", price: "£28.89" },
-            { date: "31 Aug", day: "Sat", price: "£28.89" },
-          ].map((day, index) => (
-            <Button
-              key={index}
-              variant={day.selected ? "default" : "outline"}
-              className={`flex-shrink-0 flex flex-col items-center p-3 h-auto ${
-                day.selected ? "bg-purple-600 text-white border-purple-600" : "border-border hover:border-purple-300"
-              }`}
-            >
-              <span className="text-xs">{day.day}</span>
-              <span className="font-medium">{day.date}</span>
-              <span className="text-xs">{day.price}</span>
-            </Button>
-          ))}
-        </div>
+        {parseResults.length == 0 && 
+          <div className="flex gap-2 mb-6 overflow-x-auto custom-scrollbar">
+            {[
+              { date: "23 Aug", day: "Fri", price: "£28.89" },
+              { date: "24 Aug", day: "Sat", price: "£28.89" },
+              { date: "25 Aug", day: "Sun", price: "£28.89" },
+              { date: "26 Aug", day: "Mon", price: "£28.89" },
+              { date: "27 Aug", day: "Tue", price: "£28.89", selected: true },
+              { date: "28 Aug", day: "Wed", price: "£28.89" },
+              { date: "29 Aug", day: "Thu", price: "£28.89" },
+              { date: "30 Aug", day: "Fri", price: "£28.89" },
+              { date: "31 Aug", day: "Sat", price: "£28.89" },
+            ].map((day, index) => (
+              <Button
+                key={index}
+                variant={day.selected ? "default" : "outline"}
+                className={`flex-shrink-0 flex flex-col items-center p-3 h-auto ${
+                  day.selected ? "bg-purple-600 text-white border-purple-600" : "border-border hover:border-purple-300"
+                }`}
+              >
+                <span className="text-xs">{day.day}</span>
+                <span className="font-medium">{day.date}</span>
+                <span className="text-xs">{day.price}</span>
+              </Button>
+            ))}
+          </div>
+        }
 
         {/* Journey Type Tabs */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <Button variant="outline" className="border-purple-600 text-purple-600 bg-transparent">
+          <Button variant="outline" className={routeType == "out" ? "border-purple-600 text-purple-600 bg-transparent" : "border-border bg-transparent"} onClick={()=>setRouteType("out")}>
             Outbound • {departDate}
           </Button>
-          <Button variant="outline" className="border-border bg-transparent">
-            Return • {returnDate}
-          </Button>
+          { 
+            returnDate && (
+              <Button variant="outline" className={routeType == "in" ? "border-purple-600 text-purple-600 bg-transparent" : "border-border bg-transparent"} onClick={()=>setRouteType("in")}>
+                Return • {returnDate}
+              </Button>
+            )
+          }
         </div>
 
         {/* Results Count */}
         <div className="flex items-center justify-between mb-4">
-          <p className="text-muted-foreground">{results.length} trains found</p>
+          <p className="text-muted-foreground">{parsedResults.length} trains found</p>
           <div className="flex gap-2 flex-col sm:flex-row">
             <Button
               variant="outline"
@@ -273,14 +288,14 @@ export default function SearchResultPage({
       </div>
 
       {/* Show More Button */}
-      {results.length > 5 && (
+      {parsedResults.length > 5 && (
         <div className="text-center mt-6">
           <Button
             variant="outline"
             onClick={() => setShowMore(!showMore)}
             className="border-purple-600 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950"
           >
-            {showMore ? "Show Less" : `Show ${results.length - 5} Later Trains`}
+            {showMore ? "Show Less" : `Show ${parsedResults.length - 5} Later Trains`}
           </Button>
         </div>
       )}

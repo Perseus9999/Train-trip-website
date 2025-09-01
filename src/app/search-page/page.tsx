@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import SearchResultPage from "@/src/components/searchResultPage"
+import SearchResultPage from "@/src/components/searchResultPage";
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { useEffect, useState } from "react";
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
@@ -12,9 +12,68 @@ export default function SearchPage() {
   const returnDate = searchParams.get("returnDate") || "";
   const travellers = searchParams.get("passengers") || "";
 
+  const [result, setResult] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+async function fetchTrainResults() {
+    const passengers_count = travellers.slice(0, travellers.indexOf(" ")) || "1";
+    const request_passenger_type = travellers.slice(travellers.indexOf(" ") + 1, travellers.indexOf(",")) || "Adult";
+    console.log("request_passenger_type => ", request_passenger_type);
+    let passengers_max_age = "25";
+    if (request_passenger_type == "Child" || request_passenger_type == "Children") passengers_max_age = "15"
+    else if (request_passenger_type == "Youth") passengers_max_age = "25"
+    else if (request_passenger_type == "Adult" || request_passenger_type == "Adults") passengers_max_age = "59"
+    else if (request_passenger_type == "Senior") passengers_max_age = "80" 
+    else passengers_max_age = "25";
+    console.log("passengers_max_age => ", passengers_max_age);
+    const params = new URLSearchParams({
+      departure,
+      arrival,
+      departureDate,
+      returnDate,
+      passengers_count,
+      passengers_max_age
+    });
+
+    const response = await fetch(
+      `http://localhost:8080/api/connections?${params.toString()}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch train results");
+    }
+    return response.json();
+  }
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+
+    fetchTrainResults()
+      .then((data) => setResult(data))
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [departure, arrival, departureDate, returnDate, travellers]);
+
+  if (loading) {
+    return <div>Loading search result...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  console.log("Search Result => ", result);
+
   return (
-    <Suspense fallback={<div>Loading search result...</div>}>
-      <SearchResultPage from={departure} to={arrival} departDate={departureDate} returnDate={returnDate} passengers={travellers}/>
-    </Suspense>
-  )
+    <SearchResultPage
+      from={departure}
+      to={arrival}
+      departDate={departureDate}
+      returnDate={returnDate}
+      passengers={travellers}
+      results={result}
+    />
+  );
 }
