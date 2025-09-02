@@ -1,6 +1,7 @@
 "use client";
 
 import SearchResultPage from "@/src/components/searchResultPage";
+import { Loader2, LoaderCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -57,7 +58,14 @@ async function fetchTrainResults() {
   }, [departure, arrival, departureDate, returnDate, travellers]);
 
   if (loading) {
-    return <div>Loading search result...</div>;
+    return (
+      <div className="bg-footerbg flex flex-col gap-24 items-center justify-center py-48 text-2xl text-white">
+        <p>
+          Loading search result...
+        </p>
+        <LoaderCircle className="h-36 w-36 animate-spin text-[#00ffb3]" />
+      </div>
+    )
   }
 
   if (error) {

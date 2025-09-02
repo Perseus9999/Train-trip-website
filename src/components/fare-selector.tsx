@@ -67,24 +67,18 @@ export default function FareSelector() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-6">
+      <div className="text-white p-6">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-white/20 rounded flex items-center justify-center">
-                <Plane className="w-4 h-4" />
-              </div>
-              <span className="text-xl font-semibold">Waybe.travel</span>
-            </div>
-            <span className="text-sm opacity-90 ml-auto">WAY BETTER TRAVEL</span>
+          <div className="flex items-center gap-3 mb-4 pl-6 pr-48">
+            <img src={'./Main Logo.jpg'}/>
           </div>
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto p-6">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-6">Select Fare</h1>
+        <h1 className="text-2xl font-semibold text-foreground mb-6">Select Fare</h1>
 
         {/* Progress Steps */}
         <div className="flex items-center gap-4 mb-8">
@@ -128,7 +122,7 @@ export default function FareSelector() {
           {/* Fare Selection */}
           <div className="lg:col-span-2 space-y-6">
             <div>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Select your fare</h2>
+              <h2 className="text-lg font-medium text-foreground mb-4">Select your fare</h2>
               <div className="space-y-4">
                 {fares.map((fare) => (
                   <Card
@@ -141,7 +135,7 @@ export default function FareSelector() {
                     onClick={() => setSelectedFare(fare.id)}
                   >
                     <div className="flex items-start justify-between mb-3">
-                      <h3 className="font-medium text-gray-900">{fare.name}</h3>
+                      <h3 className="font-medium text-foreground">{fare.name}</h3>
                       <div className="text-right">
                         <div className="text-lg font-semibold text-purple-600">€{fare.price.toFixed(2)}</div>
                         <div className="text-sm text-gray-500">per person</div>
@@ -174,7 +168,7 @@ export default function FareSelector() {
 
             {/* Add Protection */}
             <div>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Add protection to your journey</h2>
+              <h2 className="text-lg font-medium text-foreground mb-4">Add protection to your journey</h2>
               <div className="space-y-4">
                 <Card className="p-4">
                   <div className="flex items-start gap-3">
@@ -184,7 +178,7 @@ export default function FareSelector() {
                         onCheckedChange={() => setCancellationProtection}
                     />
                     <div className="flex-1">
-                      <label htmlFor="cancellation" className="font-medium text-gray-900 cursor-pointer">
+                      <label htmlFor="cancellation" className="font-medium text-foreground cursor-pointer">
                         Cancellation Protection
                       </label>
                       <p className="text-sm text-gray-600 mt-1">
@@ -203,7 +197,7 @@ export default function FareSelector() {
                         onCheckedChange={() => setSeatReservation} 
                     />
                     <div className="flex-1">
-                      <label htmlFor="seat" className="font-medium text-gray-900 cursor-pointer">
+                      <label htmlFor="seat" className="font-medium text-foreground cursor-pointer">
                         Seat Reservation
                       </label>
                       <p className="text-sm text-gray-600 mt-1">Reserve your preferred seat - window or aisle</p>
@@ -218,7 +212,7 @@ export default function FareSelector() {
           {/* Journey Summary */}
           <div className="lg:col-span-1">
             <Card className="p-6 sticky top-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Journey Summary</h3>
+              <h3 className="text-lg font-medium text-foreground mb-4">Journey Summary</h3>
 
               <div className="bg-purple-600 text-white rounded-lg p-4 mb-4">
                 <div className="flex items-center justify-between">
@@ -236,7 +230,7 @@ export default function FareSelector() {
 
               <div className="space-y-3 text-sm">
                 <div>
-                  <div className="font-medium text-gray-900">Wed, 3 Sep 2025</div>
+                  <div className="font-medium text-foreground">Wed, 3 Sep 2025</div>
                   <div className="text-gray-600">04:34 - 04:59 (25 min)</div>
                 </div>
 

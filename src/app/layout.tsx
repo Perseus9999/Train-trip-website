@@ -1,7 +1,10 @@
 import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
+import { ThemeProvider } from "@/src/components/theme-provider"
+import { Suspense } from "react"
 import './globals.css'
+import Footer from '../components/footer'
 
 export const metadata: Metadata = {
   title: 'Book Train Travel With Crypto',
@@ -19,9 +22,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html 
+      lang="en"
+      className='light'
+      style={{colorScheme: "light"}}
+    >
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        {children}
+        <Suspense fallback={null}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </ThemeProvider>
+        </Suspense>
       </body>
     </html>
   )

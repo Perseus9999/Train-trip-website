@@ -8,6 +8,7 @@ import { Label } from "@/src/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { Checkbox } from "@/src/components/ui/checkbox"
 import { Plane, ArrowRight, Mail, User, CreditCard } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export default function PassengerDetails() {
   const [formData, setFormData] = useState({
@@ -27,28 +28,31 @@ export default function PassengerDetails() {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
+  const router = useRouter();
+
+  const handleMovePage = () => {
+    const params = new URLSearchParams({
+
+    });
+    router.push(`/review-page?${params.toString()}`);
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-6">
+      <div className="text-white p-6">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-white/20 rounded flex items-center justify-center">
-                <Plane className="w-4 h-4" />
-              </div>
-              <span className="text-xl font-semibold">Waybe.travel</span>
-            </div>
-            <span className="text-sm opacity-90 ml-auto">WAY BETTER TRAVEL</span>
+          <div className="flex items-center gap-3 mb-4 pl-6 pr-48">
+            <img src={'./Main Logo.jpg'}/>
           </div>
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto p-6">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-6">Passenger Details</h1>
+        <h1 className="text-2xl font-semibold text-foreground mb-6">Passenger Details</h1>
 
         {/* Progress Steps */}
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center justify-center gap-4 mb-8">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
               ✓
@@ -86,7 +90,7 @@ export default function PassengerDetails() {
         </div>
 
         <div className="text-center mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Passenger Details</h2>
+          <h2 className="text-xl font-semibold text-foreground mb-2">Passenger Details</h2>
           <p className="text-gray-600">Please provide your travel information to complete the booking</p>
         </div>
 
@@ -97,12 +101,12 @@ export default function PassengerDetails() {
             <Card className="p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Mail className="w-5 h-5 text-purple-600" />
-                <h3 className="text-lg font-medium text-gray-900">Contact Information</h3>
+                <h3 className="text-lg font-medium text-foreground">Contact Information</h3>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="email" className="text-sm font-medium text-foreground">
                     Email Address <span className="text-red-500">*</span>
                   </Label>
                   <Input
@@ -122,12 +126,12 @@ export default function PassengerDetails() {
             <Card className="p-6">
               <div className="flex items-center gap-2 mb-4">
                 <User className="w-5 h-5 text-purple-600" />
-                <h3 className="text-lg font-medium text-gray-900">Personal Information</h3>
+                <h3 className="text-lg font-medium text-foreground">Personal Information</h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="firstName" className="text-sm font-medium text-foreground">
                     First Name <span className="text-red-500">*</span>
                   </Label>
                   <Input
@@ -140,7 +144,7 @@ export default function PassengerDetails() {
                 </div>
 
                 <div>
-                  <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="lastName" className="text-sm font-medium text-foreground">
                     Last Name <span className="text-red-500">*</span>
                   </Label>
                   <Input
@@ -153,7 +157,7 @@ export default function PassengerDetails() {
                 </div>
 
                 <div>
-                  <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="phone" className="text-sm font-medium text-foreground">
                     Phone Number
                   </Label>
                   <Input
@@ -167,7 +171,7 @@ export default function PassengerDetails() {
                 </div>
 
                 <div>
-                  <Label htmlFor="dateOfBirth" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="dateOfBirth" className="text-sm font-medium text-foreground">
                     Date of Birth <span className="text-red-500">*</span>
                   </Label>
                   <Input
@@ -185,12 +189,12 @@ export default function PassengerDetails() {
             <Card className="p-6">
               <div className="flex items-center gap-2 mb-4">
                 <CreditCard className="w-5 h-5 text-purple-600" />
-                <h3 className="text-lg font-medium text-gray-900">Identity & Travel Information</h3>
+                <h3 className="text-lg font-medium text-foreground">Identity & Travel Information</h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="idType" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="idType" className="text-sm font-medium text-foreground">
                     ID Type
                   </Label>
                   <Select value={formData.idType} onValueChange={(value) => handleInputChange("idType", value)}>
@@ -206,7 +210,7 @@ export default function PassengerDetails() {
                 </div>
 
                 <div>
-                  <Label htmlFor="idNumber" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="idNumber" className="text-sm font-medium text-foreground">
                     ID Number
                   </Label>
                   <Input
@@ -219,7 +223,7 @@ export default function PassengerDetails() {
                 </div>
 
                 <div>
-                  <Label htmlFor="country" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="country" className="text-sm font-medium text-foreground">
                     Country of Residence
                   </Label>
                   <Select value={formData.country} onValueChange={(value) => handleInputChange("country", value)}>
@@ -237,7 +241,7 @@ export default function PassengerDetails() {
                 </div>
 
                 <div>
-                  <Label htmlFor="loyaltyCard" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="loyaltyCard" className="text-sm font-medium text-foreground">
                     Loyalty Card Number
                   </Label>
                   <Input
@@ -261,7 +265,7 @@ export default function PassengerDetails() {
                   onCheckedChange={(checked) => handleInputChange("newsletter", checked as boolean)}
                 />
                 <div className="flex-1">
-                  <label htmlFor="newsletter" className="text-sm text-gray-700 cursor-pointer">
+                  <label htmlFor="newsletter" className="text-sm text-foreground cursor-pointer">
                     Stay in the loop: get updates, special offers, and travel tips via email. You can unsubscribe at any
                     time.
                   </label>
@@ -269,7 +273,12 @@ export default function PassengerDetails() {
               </div>
             </Card>
 
-            <Button className="w-full bg-purple-600 hover:bg-purple-700 py-3">Continue to Review Journey</Button>
+            <Button 
+              className="w-full bg-purple-600 hover:bg-purple-700 py-3"
+              onClick={() => handleMovePage()}
+            >
+              Continue to Review Journey
+            </Button>
           </div>
 
           {/* Journey Summary Sidebar */}
@@ -279,7 +288,7 @@ export default function PassengerDetails() {
                 <div className="w-6 h-6 bg-purple-100 rounded flex items-center justify-center">
                   <Plane className="w-4 h-4 text-purple-600" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900">Journey Summary</h3>
+                <h3 className="text-lg font-medium text-foreground">Journey Summary</h3>
               </div>
 
               <div className="bg-purple-600 text-white rounded-lg p-4 mb-4">
