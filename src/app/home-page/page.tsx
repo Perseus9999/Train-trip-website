@@ -7,9 +7,8 @@ import { Card } from "@/src/components/ui/card"
 import { Globe, User, Menu, Plane, Train, Bus, HelpCircle, Building, Users, Car, Sun, Moon } from "lucide-react"
 import { useState, useEffect } from "react"
 import TravellerSelector from "@/src/components/travellerSelector"
-import { toast } from "@/src/components/ui/use-toast"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { toast } from 'sonner'
 
 export default function HomePage() {
   const [isDark, setIsDark] = useState(false)
@@ -57,20 +56,10 @@ export default function HomePage() {
   function searchTrains() {
     // Implement search functionality here
     if(!departure || !arrival || !departureDate) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all fields before searching.",
-        status: "warning",
-        duration: 4000,
-      });
+      toast.warning("Please fill in From and To fields before searching.");
       return;
     }
-    toast({
-      title: "Search Started",
-      description: `Searching trains from ${departure} to ${arrival} on ${departureDate} returning on ${returnDate} for ${travellers}.`,
-      status: "success",
-      duration:4000
-    });
+    toast.success(`Search trains from "${departureLabel}" to "${arrivalLabel}" on "${departureDate}"`);
     const params = new URLSearchParams({
       from: departure,
       to: arrival,
@@ -81,7 +70,6 @@ export default function HomePage() {
       passengers: travellers,
     });
     router.push(`/search-page?${params.toString()}`);
-    console.log("Searching trains from", departure, "to", arrival, "on", departureDate, "returning on", returnDate, "for", travellers);
   }
 
   return (
@@ -299,13 +287,7 @@ export default function HomePage() {
                 }`}
                 onClick={() => searchTrains()}
               >
-                {
-                  !departure || !arrival || !departureDate ? 
-                  "Fill All Fields" :                 
-                  // <Link href={'/search-page'}>
-                      "Search"
-                  // </Link>
-                }
+                Search
               </Button>
             </div>
           </div>

@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/src/components/theme-provider"
 import { Suspense } from "react"
 import './globals.css'
 import Footer from '../components/footer'
+import { Toaster } from 'sonner'
 
 export const metadata: Metadata = {
   title: 'Book Train Travel With Crypto',
@@ -32,6 +33,7 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <main className="flex-1">{children}</main>
             <Footer />
+            <Toaster position="bottom-center" richColors />
           </ThemeProvider>
         </Suspense>
       </body>

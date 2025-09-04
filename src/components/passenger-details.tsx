@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/src/components/ui/checkbox"
 import { Plane, ArrowRight, Mail, User, CreditCard } from "lucide-react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 interface PassengerDetailsProps {
   outResultId : string,
@@ -58,7 +59,7 @@ export default function PassengerDetails({
 
   const handleMovePage = () => {
     const params = new URLSearchParams({
-
+      loginFormData: JSON.stringify(formData),
     });
     router.push(`/review-page?${params.toString()}`);
   }
@@ -69,7 +70,9 @@ export default function PassengerDetails({
       <div className="text-white p-6">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-3 mb-4 pl-6 pr-48">
-            <img src={'./Main Logo.jpg'}/>
+            <Link href={'/'}>
+              <img src={'./Main Logo.jpg'}/>
+            </Link>
           </div>
         </div>
       </div>
@@ -322,28 +325,30 @@ export default function PassengerDetails({
                   <div className="bg-purple-600 text-white rounded-lg p-4 mb-4">
                     <div className="flex items-center justify-between mb-2">
                       <div className="text-center">
-                        <div className="text-lg font-semibold">PADDINGTON</div>
-                        <div className="text-xs opacity-90">GBL</div>
+                        <div className="text-lg font-semibold">{departureRoute.split("→")[0]}</div>
                       </div>
                       <ArrowRight className="w-5 h-5" />
                       <div className="text-center">
-                        <div className="text-lg font-semibold">HEATHROW</div>
-                        <div className="text-xs opacity-90">GBL</div>
+                        <div className="text-lg font-semibold">{departureRoute.split("→")[1]}</div>
                       </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-sm opacity-90">25m</div>
-                      <div className="flex items-center justify-center gap-4 text-sm mt-2">
-                        <span>04:34</span>
-                        <span>04:59</span>
-                      </div>
-                      <div className="text-xs opacity-75 mt-1">Wed, Sep 3, 2025</div>
+                      <div className="text-sm opacity-90">{outboundDuration}</div>
+                      <div className="text-xs opacity-75 mt-1">{departureDate}</div>
                     </div>
                   </div>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Class</span>
-                      <span className="font-medium">First class</span>
+                      <span className="font-medium">
+                        {
+                          outboundClass == "FARE1" ? "Standard" :
+                          outboundClass == "FARE2" ? "Second Class" :
+                          outboundClass == "FARE3" ? "First Class" :
+                          outboundClass == "FARE4" ? "Third Class" :
+                          outboundClass == "FARE5" ? "Advanced Discounted Single" : ""
+                        }
+                      </span>
                     </div>
 
                     <div className="flex justify-between">
@@ -363,28 +368,30 @@ export default function PassengerDetails({
                   <div className="bg-purple-600 text-white rounded-lg p-4 mb-4">
                     <div className="flex items-center justify-between mb-2">
                       <div className="text-center">
-                        <div className="text-lg font-semibold">PADDINGTON</div>
-                        <div className="text-xs opacity-90">GBL</div>
+                        <div className="text-lg font-semibold">{returnRoute.split("→")[0]}</div>
                       </div>
                       <ArrowRight className="w-5 h-5" />
                       <div className="text-center">
-                        <div className="text-lg font-semibold">HEATHROW</div>
-                        <div className="text-xs opacity-90">GBL</div>
+                        <div className="text-lg font-semibold">{returnRoute.split("→")[1]}</div>
                       </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-sm opacity-90">25m</div>
-                      <div className="flex items-center justify-center gap-4 text-sm mt-2">
-                        <span>04:34</span>
-                        <span>04:59</span>
-                      </div>
-                      <div className="text-xs opacity-75 mt-1">Wed, Sep 3, 2025</div>
+                      <div className="text-sm opacity-90">{inboundDuration}</div>
+                      <div className="text-xs opacity-75 mt-1">{returnDate}</div>
                     </div>
                   </div>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Class</span>
-                      <span className="font-medium">First class</span>
+                      <span className="font-medium">
+                        {
+                          inboundClass == "FARE1" ? "Standard" :
+                          inboundClass == "FARE2" ? "Second Class" :
+                          inboundClass == "FARE3" ? "First Class" :
+                          inboundClass == "FARE4" ? "Third Class" :
+                          inboundClass == "FARE5" ? "Advanced Discounted Single" : ""
+                        }
+                      </span>
                     </div>
 
                     <div className="flex justify-between">
@@ -403,7 +410,7 @@ export default function PassengerDetails({
               <div className="border-t pt-3">
                 <div className="flex justify-between text-lg font-semibold">
                   <span>Total Fare</span>
-                  <span>€{totalFare}</span>
+                  <span>€{Number(totalFare).toFixed(2)}</span>
                 </div>
               </div>
             </Card>

@@ -1,5 +1,6 @@
 'use client'
 
+import Link from "next/link"
 import { useState } from "react"
 
 export default function Footer() {
@@ -12,7 +13,9 @@ export default function Footer() {
                     <div className="sm:col-span-2 lg:col-span-1">
                         <div className="flex items-center space-x-3 mb-6">
                             <div className={`flex col-span-1 items-center space-x-3 rounded-xl overflow-hidden`}>
-                                <img src={"./Main Logo.jpg"} className="w-full" />
+                                <Link href={'/'}>
+                                    <img src={'./Main Logo.jpg'} />
+                                </Link>
                             </div>
                         </div>
                         <p className="text-sm opacity-90 leading-relaxed">

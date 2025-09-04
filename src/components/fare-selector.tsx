@@ -6,6 +6,7 @@ import { Card } from "@/src/components/ui/card"
 import { Checkbox } from "@/src/components/ui/checkbox"
 import { Plane, ArrowRight, Check, X, AlertTriangle } from "lucide-react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 interface FareSelectorProps {
   outResultId: string
@@ -118,7 +119,9 @@ export default function FareSelector({
       <div className="text-white p-6">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-3 mb-4 pl-6 pr-48">
-            <img src={'./Main Logo.jpg'}/>
+            <Link href={'/'}>
+              <img src={'./Main Logo.jpg'} />
+            </Link>
           </div>
         </div>
       </div>
@@ -273,7 +276,7 @@ export default function FareSelector({
                   </div>
                   <div>
                     <div className="text-sm mb-4 text-foreground">{departureDate}</div>
-                    <div className="text-gray-600 text-right">{outboundDuration} min</div>
+                    <div className="text-gray-600 text-right">{outboundDuration}</div>
                   </div>
                 </div>
               )}
@@ -291,7 +294,7 @@ export default function FareSelector({
                   </div>
                   <div>
                     <div className="text-sm mb-4 text-foreground">{returnDate}</div>
-                    <div className="text-gray-600 text-right">{inboundDuration} min</div>
+                    <div className="text-gray-600 text-right">{inboundDuration}</div>
                   </div>
                 </div>
               )}

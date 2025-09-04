@@ -6,6 +6,7 @@ import { Card } from "@/src/components/ui/card"
 import { Badge } from "@/src/components/ui/badge"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { toast } from 'sonner'
 
 const temple_result = '../res-json/standard-res.json'
 
@@ -84,12 +85,6 @@ function parseResults(json: any): TravelResult[] {
         classNum++
       }
     });
-    // console.log("class standardPrice => ", standardPrice)
-    // console.log("class firstClassPrice => ", firstClassPrice)
-    // console.log("class secondClassPrice => ", secondClassPrice)
-    // console.log("class thirdClassPrice => ", thirdClassPrice)
-    // console.log("class advancedDiscountPrice => ", advancedDiscountPrice)
-    // console.log("class number => ", classNum)
     return {
       id: item.id,
       departureTime: attrs.departure_time?.slice(-5) || "",
@@ -177,11 +172,6 @@ export default function SearchResultPage({
 
   let parsedResults: TravelResult[] = [];
   parsedResults = results && results.length > 0 ? results : parseResults(results);
-  // if (Array.isArray(results) && results.length > 0 && "departureTime" in results[0]) {
-  //   parsedResults = results;
-  // } else if (results) {
-  //   parsedResults = parseResults(results);
-  // }
 
   const router = useRouter();
 
@@ -229,32 +219,42 @@ export default function SearchResultPage({
       setSelections(prev => ({...prev, departureDate: `${date}`}));
       setSelections(prev => ({...prev, outboundClass: `${travelClass}`}));
       setSelections(prev => ({...prev, outboundPrice: `${price}`}));
+      setSelections(prev => ({...prev, outboundDuration: `${duration}`}));
       setOutResultId(resultId);
     } else if (routeType == "inbound") {
       setSelections(prev => ({...prev, returnRoute: `${to} → ${from}`}));
       setSelections(prev => ({...prev, returnDate: `${date}`}));
       setSelections(prev => ({...prev, inboundClass: `${travelClass}`}));
       setSelections(prev => ({...prev, inboundPrice: `${price}`}));
+      setSelections(prev => ({...prev, inboundDuration: `${duration}`}));
       setInResultId(resultId);
     }
   }
 
   const continueBooking = (selectFareInfo: SelectedResultInfo) => {
-    const params = new URLSearchParams({
-      outResultId: outResultId,
-      departureRoute: selectFareInfo.departureRoute,
-      departureDate: selectFareInfo.departureDate,
-      outboundClass: selectFareInfo.outboundClass,
-      outboundPrice: selectFareInfo.outboundPrice,
-      outboundDuration: selectFareInfo.outboundDuration,
-      inResultId: inResultId,
-      returnRoute: selectFareInfo.returnRoute,
-      returnDate: selectFareInfo.returnDate,
-      inboundClass: selectFareInfo.inboundClass,
-      inboundPrice: selectFareInfo.inboundPrice,
-      inboundDuration: selectFareInfo.inboundDuration
-    });
-    router.push(`/selectFare-page?${params}`);
+    if (departDate && !selectFareInfo.departureRoute) {
+      toast.error("Please select outbound journey.");
+      return;
+    } else if (returnDate && !selectFareInfo.returnDate) {
+      toast.error("Please select return journey.");
+      return;
+    } else {
+      const params = new URLSearchParams({
+        outResultId: outResultId,
+        departureRoute: selectFareInfo.departureRoute,
+        departureDate: selectFareInfo.departureDate,
+        outboundClass: selectFareInfo.outboundClass,
+        outboundPrice: selectFareInfo.outboundPrice,
+        outboundDuration: selectFareInfo.outboundDuration,
+        inResultId: inResultId,
+        returnRoute: selectFareInfo.returnRoute,
+        returnDate: selectFareInfo.returnDate,
+        inboundClass: selectFareInfo.inboundClass,
+        inboundPrice: selectFareInfo.inboundPrice,
+        inboundDuration: selectFareInfo.inboundDuration
+      });
+      router.push(`/selectFare-page?${params}`);
+    }
   }
 
   return (
@@ -262,7 +262,9 @@ export default function SearchResultPage({
       {/* Header */}
       <div className="mb-8">
         <div className="rounded-lg mb-6 text-center pr-36">
-          <img src={'./Main Logo.jpg'} />
+          <Link href={'/'}>
+            <img src={'./Main Logo.jpg'} />
+          </Link>
         </div>
 
         <h2 className="text-2xl font-bold text-foreground mb-4">Results</h2>

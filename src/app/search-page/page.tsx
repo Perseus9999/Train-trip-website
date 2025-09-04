@@ -4,6 +4,7 @@ import SearchResultPage from "@/src/components/searchResultPage";
 import { AlertTriangle, BatteryWarning, Loader2, LoaderCircle, MessageCircleWarningIcon, MessageSquareWarningIcon, QuoteIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
