@@ -1,22 +1,54 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/src/components/ui/button"
 import { Card } from "@/src/components/ui/card"
 import { Checkbox } from "@/src/components/ui/checkbox"
 import { Plane, ArrowRight, Check, X, AlertTriangle } from "lucide-react"
 import { useRouter } from "next/navigation"
 
-export default function FareSelector() {
+interface FareSelectorProps {
+  outResultId: string
+  departureRoute: string
+  departureDate: string
+  outboundClass: string
+  outboundPrice: string
+  outboundDuration: string
+  inResultId: string
+  returnRoute: string
+  returnDate: string
+  inboundClass: string
+  inboundPrice: string
+  inboundDuration: string
+}
+
+export default function FareSelector({
+  outResultId = "",
+  departureRoute = "",
+  departureDate = "",
+  outboundClass = "",
+  outboundPrice = "",
+  outboundDuration = "",
+  inResultId = "",
+  returnRoute = "",
+  returnDate = "",
+  inboundClass = "",
+  inboundPrice = "",
+  inboundDuration = ""
+}:FareSelectorProps) {
   const [selectedFare, setSelectedFare] = useState("standard")
   const [cancellationProtection, setCancellationProtection] = useState(false)
   const [seatReservation, setSeatReservation] = useState(true)
+  const [cancelPrice, setCancelPrice] = useState(0)
+  const [reservationPrice, setReservationPrice] = useState(0)
+
+  console.log("SelectFare resultId => ", departureRoute)
 
   const fares = [
     {
       id: "standard",
       name: "Standard",
-      price: 37.06,
+      price: Number(outboundPrice) + Number(inboundPrice),
       features: [
         { text: "Digital ticket", included: true },
         { text: "Standard seating", included: true },
@@ -27,7 +59,7 @@ export default function FareSelector() {
     {
       id: "standard-flex",
       name: "Standard Flex",
-      price: 42.06,
+      price: Number(outboundPrice) + Number(inboundPrice) + 5,
       features: [
         { text: "Digital ticket", included: true },
         { text: "Standard seating", included: true },
@@ -39,7 +71,7 @@ export default function FareSelector() {
     {
       id: "first-class",
       name: "First Class",
-      price: 52.06,
+      price: Number(outboundPrice) + Number(inboundPrice) + 15,
       features: [
         { text: "Digital ticket", included: true },
         { text: "First class seating", included: true },
@@ -51,17 +83,31 @@ export default function FareSelector() {
     },
   ]
 
+  useEffect(() => {
+    setCancelPrice(cancellationProtection ? 4.98 : 0);
+    setReservationPrice(seatReservation ? 0 : 0);
+  }, [cancellationProtection, seatReservation])
+
   const calculateTotal = () => {
     const baseFare = fares.find((f) => f.id === selectedFare)?.price || 0
-    const cancellation = cancellationProtection ? 4.98 : 0
-    const seat = seatReservation ? 0 : 0 // Free in this case
-    return baseFare + cancellation + seat
+    return baseFare + cancelPrice + reservationPrice;
   }
 
   const router = useRouter();
 
   const handleContinueResult = () => {
     const params = new URLSearchParams({
+      outResultId : outResultId,
+      departureRoute : departureRoute,
+      departureDate : departureDate,
+      outboundClass : outboundClass,
+      outboundDuration : outboundDuration,
+      inResultId : inResultId,
+      returnRoute : returnRoute,
+      returnDate : returnDate,
+      inboundClass : inboundClass,
+      inboundDuration : inboundDuration,
+      totalFare: calculateTotal().toString()
     });
     router.push(`/passengerDetails-page?${params.toString()}`);
   }
@@ -136,15 +182,15 @@ export default function FareSelector() {
                   >
                     <div className="flex items-start justify-between mb-3">
                       <h3 className="font-medium text-foreground">{fare.name}</h3>
-                      <div className="text-right">
+                      <div className="text-right flex flex-row items-center justify-center">
                         <div className="text-lg font-semibold text-purple-600">€{fare.price.toFixed(2)}</div>
-                        <div className="text-sm text-gray-500">per person</div>
+                        <div className="text-sm text-gray-500 ml-2">per person</div>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 mb-3">
+                    <div className="flex items-center justify-start gap-4 mb-3">
                       {fare.features.map((feature, index) => (
-                        <div key={index} className="flex items-center gap-2 text-sm">
+                        <div key={index} className="flex items-center justify-start gap-1 text-sm">
                           {feature.included ? (
                             <Check className="w-4 h-4 text-green-500" />
                           ) : (
@@ -175,7 +221,7 @@ export default function FareSelector() {
                     <Checkbox
                         id="cancellation"
                         checked={cancellationProtection}
-                        onCheckedChange={() => setCancellationProtection}
+                        onCheckedChange={() => setCancellationProtection(cancellationProtection ? false : true)}
                     />
                     <div className="flex-1">
                       <label htmlFor="cancellation" className="font-medium text-foreground cursor-pointer">
@@ -194,7 +240,7 @@ export default function FareSelector() {
                     <Checkbox 
                         id="seat" 
                         checked={seatReservation} 
-                        onCheckedChange={() => setSeatReservation} 
+                        onCheckedChange={() => setSeatReservation(seatReservation ? false : true)} 
                     />
                     <div className="flex-1">
                       <label htmlFor="seat" className="font-medium text-foreground cursor-pointer">
@@ -213,43 +259,77 @@ export default function FareSelector() {
           <div className="lg:col-span-1">
             <Card className="p-6 sticky top-6">
               <h3 className="text-lg font-medium text-foreground mb-4">Journey Summary</h3>
-
-              <div className="bg-purple-600 text-white rounded-lg p-4 mb-4">
-                <div className="flex items-center justify-between">
-                  <div className="text-center">
-                    <div className="text-lg font-semibold">LPB</div>
-                    <div className="text-sm opacity-90">London Paddington</div>
+              {departureRoute && (
+                <div className="text-white">
+                  <p className="text-purple-600 font-bold text-xl mb-4">• Outbound</p>
+                  <div className="flex items-center justify-between bg-purple-600 rounded-lg p-4 mb-4">
+                    <div className="text-center">
+                      <div className="text-md opacity-90">{departureRoute.split("→")[0]}</div>
+                    </div>
+                    <ArrowRight className="w-5 h-5" />
+                    <div className="text-center">
+                      <div className="text-md opacity-90">{departureRoute.split("→")[1]}</div>
+                    </div>
                   </div>
-                  <ArrowRight className="w-5 h-5" />
-                  <div className="text-center">
-                    <div className="text-lg font-semibold">LHB</div>
-                    <div className="text-sm opacity-90">London Heathrow (T5)</div>
+                  <div>
+                    <div className="text-sm mb-4 text-foreground">{departureDate}</div>
+                    <div className="text-gray-600 text-right">{outboundDuration} min</div>
                   </div>
                 </div>
-              </div>
+              )}
+              {returnRoute && (
+                <div className="text-white">
+                  <p className="text-purple-600 font-bold text-xl mb-4">• Inbound</p>
+                  <div className="flex items-center justify-between bg-purple-600 rounded-lg p-4 mb-4">
+                    <div className="text-center">
+                      <div className="text-md opacity-90">{returnRoute.split("→")[0]}</div>
+                    </div>
+                    <ArrowRight className="w-5 h-5" />
+                    <div className="text-center">
+                      <div className="text-md opacity-90">{returnRoute.split("→")[1]}</div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm mb-4 text-foreground">{returnDate}</div>
+                    <div className="text-gray-600 text-right">{inboundDuration} min</div>
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-3 text-sm">
-                <div>
-                  <div className="font-medium text-foreground">Wed, 3 Sep 2025</div>
-                  <div className="text-gray-600">04:34 - 04:59 (25 min)</div>
-                </div>
-
                 <div className="border-t pt-3">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">First class Fare</span>
-                    <span className="font-medium">€148.22</span>
+                    <span className="text-gray-600">
+                      Outbound - {
+                        outboundClass == "FARE1" ? "Standard" :
+                        outboundClass == "FARE2" ? "Second class" :
+                        outboundClass == "FARE3" ? "First class" :
+                        outboundClass == "FARE4" ? "Third class" : "Advanced Discounted Single"
+                      }
+                    </span>
+                    <span className="font-medium">€{outboundPrice}</span>
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">4 passengers • €37.06 each</div>
                 </div>
 
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Passengers:</span>
-                  <span>1 Adult, 3 Youths</span>
+                  <span className="text-gray-600">
+                    Inbound - {
+                        inboundClass == "FARE1" ? "Standard" :
+                        inboundClass == "FARE2" ? "Second class" :
+                        inboundClass == "FARE3" ? "First class" :
+                        inboundClass == "FARE4" ? "Third class" : "Advanced Discounted Single"
+                      }
+                  </span>
+                  <span className="font-medium">€{inboundPrice}</span>
                 </div>
 
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Cancellation Protection</span>
+                  <span>€{cancelPrice}</span>
+                </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Seat Reservation</span>
-                  <span>€0.00</span>
+                  <span>€{reservationPrice}</span>
                 </div>
 
                 <div className="border-t pt-3">

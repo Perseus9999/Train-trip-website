@@ -10,7 +10,33 @@ import { Checkbox } from "@/src/components/ui/checkbox"
 import { Plane, ArrowRight, Mail, User, CreditCard } from "lucide-react"
 import { useRouter } from "next/navigation"
 
-export default function PassengerDetails() {
+interface PassengerDetailsProps {
+  outResultId : string,
+  departureRoute : string,
+  departureDate : string,
+  outboundClass : string,
+  outboundDuration : string,
+  inResultId : string,
+  returnRoute : string,
+  returnDate : string,
+  inboundClass : string,
+  inboundDuration : string,
+  totalFare: string
+}
+
+export default function PassengerDetails({
+  outResultId = "",
+  departureRoute = "",
+  departureDate = "",
+  outboundClass = "",
+  outboundDuration = "",
+  inResultId = "",
+  returnRoute = "",
+  returnDate = "",
+  inboundClass = "",
+  inboundDuration = "",
+  totalFare= ""
+}: PassengerDetailsProps) {
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
@@ -291,49 +317,93 @@ export default function PassengerDetails() {
                 <h3 className="text-lg font-medium text-foreground">Journey Summary</h3>
               </div>
 
-              <div className="bg-purple-600 text-white rounded-lg p-4 mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-center">
-                    <div className="text-lg font-semibold">PADDINGTON</div>
-                    <div className="text-xs opacity-90">GBL</div>
+              {departureRoute && (
+                <div>
+                  <div className="bg-purple-600 text-white rounded-lg p-4 mb-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-center">
+                        <div className="text-lg font-semibold">PADDINGTON</div>
+                        <div className="text-xs opacity-90">GBL</div>
+                      </div>
+                      <ArrowRight className="w-5 h-5" />
+                      <div className="text-center">
+                        <div className="text-lg font-semibold">HEATHROW</div>
+                        <div className="text-xs opacity-90">GBL</div>
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-sm opacity-90">25m</div>
+                      <div className="flex items-center justify-center gap-4 text-sm mt-2">
+                        <span>04:34</span>
+                        <span>04:59</span>
+                      </div>
+                      <div className="text-xs opacity-75 mt-1">Wed, Sep 3, 2025</div>
+                    </div>
                   </div>
-                  <ArrowRight className="w-5 h-5" />
-                  <div className="text-center">
-                    <div className="text-lg font-semibold">HEATHROW</div>
-                    <div className="text-xs opacity-90">GBL</div>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Class</span>
+                      <span className="font-medium">First class</span>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Passengers</span>
+                      <span className="font-medium">1 Adult</span>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Ticket Type</span>
+                      <span className="font-medium">Digital Ticket</span>
+                    </div>
                   </div>
                 </div>
-                <div className="text-center">
-                  <div className="text-sm opacity-90">25m</div>
-                  <div className="flex items-center justify-center gap-4 text-sm mt-2">
-                    <span>04:34</span>
-                    <span>04:59</span>
+              )}
+              {returnRoute && (
+                <div>
+                  <div className="bg-purple-600 text-white rounded-lg p-4 mb-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-center">
+                        <div className="text-lg font-semibold">PADDINGTON</div>
+                        <div className="text-xs opacity-90">GBL</div>
+                      </div>
+                      <ArrowRight className="w-5 h-5" />
+                      <div className="text-center">
+                        <div className="text-lg font-semibold">HEATHROW</div>
+                        <div className="text-xs opacity-90">GBL</div>
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-sm opacity-90">25m</div>
+                      <div className="flex items-center justify-center gap-4 text-sm mt-2">
+                        <span>04:34</span>
+                        <span>04:59</span>
+                      </div>
+                      <div className="text-xs opacity-75 mt-1">Wed, Sep 3, 2025</div>
+                    </div>
                   </div>
-                  <div className="text-xs opacity-75 mt-1">Wed, Sep 3, 2025</div>
-                </div>
-              </div>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Class</span>
+                      <span className="font-medium">First class</span>
+                    </div>
 
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Class</span>
-                  <span className="font-medium">First class</span>
-                </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Passengers</span>
+                      <span className="font-medium">1 Adult</span>
+                    </div>
 
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Passengers</span>
-                  <span className="font-medium">1 Adult</span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Ticket Type</span>
-                  <span className="font-medium">Digital Ticket</span>
-                </div>
-
-                <div className="border-t pt-3">
-                  <div className="flex justify-between text-lg font-semibold">
-                    <span>Total Fare</span>
-                    <span>148.22</span>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Ticket Type</span>
+                      <span className="font-medium">Digital Ticket</span>
+                    </div>
                   </div>
+                </div>
+              )}
+
+              <div className="border-t pt-3">
+                <div className="flex justify-between text-lg font-semibold">
+                  <span>Total Fare</span>
+                  <span>€{totalFare}</span>
                 </div>
               </div>
             </Card>

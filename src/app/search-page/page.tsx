@@ -1,7 +1,7 @@
 "use client";
 
 import SearchResultPage from "@/src/components/searchResultPage";
-import { Loader2, LoaderCircle } from "lucide-react";
+import { AlertTriangle, BatteryWarning, Loader2, LoaderCircle, MessageCircleWarningIcon, MessageSquareWarningIcon, QuoteIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -9,6 +9,8 @@ export default function SearchPage() {
   const searchParams = useSearchParams();
   const departure = searchParams.get("from") || "";
   const arrival = searchParams.get("to") || "";
+  const departureName = searchParams.get("fromName") || "";
+  const arrivalName = searchParams.get("toName") || "";
   const departureDate = searchParams.get("departDate") || "";
   const returnDate = searchParams.get("returnDate") || "";
   const travellers = searchParams.get("passengers") || "";
@@ -55,7 +57,7 @@ async function fetchTrainResults() {
       .then((data) => setResult(data))
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [departure, arrival, departureDate, returnDate, travellers]);
+  }, [departure, arrival, departureName, arrivalName, departureDate, returnDate, travellers]);
 
   if (loading) {
     return (
@@ -69,15 +71,23 @@ async function fetchTrainResults() {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div className="bg-footerbg flex flex-col items-center justify-center py-48 text-2xl text-white">
+        <div className="flex flex-row items-center justify-center text-pink-600">
+          <AlertTriangle className="w-10 h-10 mx-4 "/>
+          <p className="text-4xl mb-2 flex items-center pt-2">Not Found Result</p>
+        </div>
+        <p className="text-sm ">Error: {error}</p>
+      </div>
+    )
   }
 
   console.log("Search Result => ", result);
 
   return (
     <SearchResultPage
-      from={departure}
-      to={arrival}
+      from={departureName}
+      to={arrivalName}
       departDate={departureDate}
       returnDate={returnDate}
       passengers={travellers}

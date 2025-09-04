@@ -74,6 +74,8 @@ export default function HomePage() {
     const params = new URLSearchParams({
       from: departure,
       to: arrival,
+      fromName: departureLabel,
+      toName: arrivalLabel,
       departDate: departureDate,
       returnDate: returnDate,
       passengers: travellers,
