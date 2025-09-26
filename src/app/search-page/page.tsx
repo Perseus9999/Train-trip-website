@@ -41,7 +41,7 @@ async function fetchTrainResults() {
     });
 
     const response = await fetch(
-      `http://localhost:8080/api/connections?${params.toString()}`
+      `http://train-trip-backend.vercel.app:8080/api/connections?${params.toString()}`
     );
 
     if (!response.ok) {
